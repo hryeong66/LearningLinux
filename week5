@@ -1,0 +1,76 @@
+#실습일지 5주차
+이번 실습에서는 디스크관리를 배웠습니다. 
+raid를 작년 운영체제 시간에 정확히 배우지는 못했었는데 이번 기회에 확실히 알게 되었습니다!!
+직접 하드디스크를 설치하고 접근 설정하고 raid를 깔고 mount하는 과정을 반복해도 아직 익숙치 않아 정리하였습니다.
+
+디스트 관리
+Mac OS virtual box 기준 - RAID 5 설정 
+
+1. 하드디스크 추가
+ - vmdk(virtual muchine disk) 사용
+ 
+2. fdisk 명령어 사용하여 디스크에 접근 할 수 있도록 변경
+ fdisk /dev/sdb 등
+ - n : add a new partition
+ - p : primary partition
+ - t : change a partition type
+   hexcode : fd ( = Linux raia)
+
+3. RAID 생성
+ : raid 가 생성되면 논리적 볼륨으로 됨
+ 설정 : /dev/md9 로 생성
+         /dev/sdb1 /dev/sdc1 세 파일 을 합처서 
+mdadm --create /dev/md5 --level=5 raid-devices=3 /dev/sdh1 /dev/sdi1 /dev/sdj1
+
+4. RAID 생성된 디렉토리에 파일시스템 생성 후 mount
+mkfs -t ext4 /dev/md5 
+mkdir /raid5
+mount /dev/md5 /raid5
+mdadm --detail /dev/md5 // 구축된 RAID 상태 확인하는 명령
+
+5. 부팅시에서 항상 mount 되도록 설정하기
+mdadm --datail --scan > file.txt //  > (redirection) 출력을 화면이 아닌 file.txt에서 함
+gedit file.txt // 이 안의 내용을 모두 복사
+gedit /etc/mdadm/mdadm.conf //이 파일을 열어 제일 밑에 붙여넣고 이름은 삭제
+update-initramfs -u // 내용 업데이트
+reboot //재부팅
+
+
+여러 번 반복하면서 조금 익숙해지긴 했지만 이 과정을 꼭 익히려고 합니다!ㅎㅎ
+그리고 디스트 관리하면서 들었던 의문들을 정리해보려고 합니다.
+
+1. Virtual Box 디스트 - VDI, VHD, VMDK //참고 블로그 : https://apophis0.tistory.com/48
+ - VDI (Virtual Disk Image)
+  : 오라클 virtual box에서만 사용가능한 가상디스크 포맷방식 
+ 
+ - VHD(Virtual Hard Disk)
+  : MS에서 개발한 파일 포맷으로 오라클 virtual box, MS의 Hyper-V, 시트릭스의 Xen에서 구동 가능.
+  
+ - VMDK(Virtual Machine Disk)
+  : 오라클 virtual box, VMWare에서 구동하는 한 포멧방식
+  
+  말그대로 각 응용프로그램에서 가용하는 다양한 파일 포맷 방식입니다. 
+  
+
+2. mount 확실하게 알기!!
+ 우선 mount란?
+  : 디스크와 같이 물리적인 장치를 특정 위치 즉 디렉토리에 연결시켜주는 것입니다.
+    mount란 말이 익숙하지 않았던 이유는 익숙한 윈도우에서는 이 기능을 자동으로 해주기 때문이었습니다.
+    하지만! 리눅스에서는 직접 해줘야 하기 때문에 위에 실습처럼
+    
+    디스크를 연결하고 이 안에 파일 시스템을 설치하고 실제로 사용하려면!
+    이 디스크와 디렉토리를 연결해주어야합니다!
+    그래서 mount 하기 전에는
+    mkdir /raid5 와 같이 디렉토리를 생성하고 
+    mount /dev/md5 /raid5  // mount (디스크) (연결할 디렉토리)
+    이렇게 연결해주어야 실제 사용할 수 있습니다!
+    
+    
+    
+  mount 같은 경우는 지난 번에도 실습했었는데...ㅎㅎ 복습 열심히해야겠어요..ㅎㅎ
+  파일 시스템은 os에서 중요한 부분 중 하나이니까 꼭 확실히 알아두도록 여러 번 더 실습해봐야겠습니다! 
+    
+
+
+
+
