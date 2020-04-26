@@ -68,10 +68,10 @@ LVM (Logical Volume Manage)
      7-3. 부팅시 자동 마운드 되도록 설정하기
         vi /etc/fstab
    	      맨 마지막 줄 다음줄에
-          <file system>	<mount point>  <type> <options> <dump> <pass>		
-          /dev/myVG/myLV1	  /lvm1       ext4	 defaults 	0	    	0
-          /dev/myVG/myLV2	  /lvm2	      ext4	 defaults 	0	    	0
-          /dev/myVG/myLV3	  /lvm3	      ext4	 defaults 	0	    	0
+          <file system>	      <mount point>    <type> <options> <dump> <pass>		
+          /dev/myVG/myLV1	  /lvm1           ext4	 defaults 	0	  0
+          /dev/myVG/myLV2	  /lvm2	      ext4	 defaults 	0	  0
+          /dev/myVG/myLV3	  /lvm3	      ext4	 defaults 	0	  0
  
 
 8. reboot 하기~
