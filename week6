@@ -1,0 +1,81 @@
+# 컴퓨터 시스템 관리 6주차 실습일지
+
+이번 강의에서 배우고 실습한 내용은
+1. RAID1 + 0 설치와 복구해보기
+2. LVM 설치하기, RAID에 우분투 설치
+3. 사용자별 공간 할당하기
+
+이렇게 였는데 지난 번 RAID 실습과 비슷하면서도 다른 LVM 실습과정을 따라하면서 정리해보았습니다.
+그래도 계속 하다보니 눈과 손이 익어가네요ㅎㅎ
+
+
+LVM (Logical Volume Manage)
+
+1. 하드디스트 추가 (2G, 3G)
+
+2. Lvm 라이브러리 설치
+      Apt install lvm2 // lvm2 => lvm 개선된 버전
+
+3. 파티션 생성
+   주의 :  type을 Linux LVM (8e) 로 변경
+
+4. Physical volume
+  4-1.Physical volume 만들기
+     pvcreate : initailize a disk or partition for use by LVM
+     pvcreate PhysicalVolume
+    
+     pvcreate /dev/sdb1
+     pvcreate /dev/sdc1
+  
+  4-2.Volume group 만들기
+     vgcreate : create a volume group
+     vgcreate VolumeGroupeName PhysicalDevicePath 
+
+     vgcreate myVG /dev/sdb1 /dev/sdc1
+
+     + vgdisplay : volume group 잘 생성됬는지 확인하는 명령
+
+ 5. Logical Volume 만들기 (1G, 3G, 1G) 
+    lvcreate : create a logical volume in an existing volume group 
+
+     새로운 logical volume
+      - 기본적으로 어디에 만들것인지, 나눌 크기, 접근할 이름 등 필요
+
+     lvcreate —size 1G —name myLV1 myVG
+     lvcreate —size 3G —name myLV2 myVG
+     lvcreate —extends 100%FREE — name myLV3 myVG// 남은 부분 다 사용 하는 옵션   
+
+     실제 물리적 디스크를 5G 넣었더라고 시스템에서 사용하는 부분이 있기때문에 마지막은 대부분 나머지 크기로 설정한다
+
+
+  6. 포멧 = 파일시스템 생성
+    mkfs -t ext4 /dev/myVG/myLV1
+    mkfs -t ext4 /dev/myVG/myLV2
+    mkfs -t ext4 /dev/myVG/myLV3
+
+
+  7. mount 하기 = 디렉토리에 연결하여 실제 사용할 수 있도록 연결하기
+    7-1. Diretory 생성
+      mkdir /lvm1 /lvm2 /lvm3
+   
+    7-2. mount 
+      mount /dev/myVG/myLV1 /lvm1
+      mount /dev/myVG/myLV2 /lvm2
+      mount /dev/myVG/myLV3 /lvm3
+
+      +df : mount 잘되었는지 확인하는 명령어
+   
+     7-3. 부팅시 자동 마운드 되도록 설정하기
+        vi /etc/fstab
+   	      맨 마지막 줄 다음줄에
+          <file system>	<mount point>  <type> <options> <dump> <pass>		
+          /dev/myVG/myLV1	  /lvm1       ext4	 defaults 	0	    	0
+          /dev/myVG/myLV2	  /lvm2	      ext4	 defaults 	0	    	0
+          /dev/myVG/myLV3	  /lvm3	      ext4	 defaults 	0	    	0
+ 
+
+8. reboot 하기~
+   
+   
+   
+ 
