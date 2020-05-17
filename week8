@@ -1,1 +1,131 @@
-#
+이번 강의에서는 드디어 배우고 싶었던 서버 구축에 대한 내용이었습니다!!!!
+지금까지 해왔던 공부나 프로젝트들은 모두 local에서 하는 내용과 실습이였기에 
+나중에 큰 프로젝트를 하기 위해서라도 꼭 서버에 대해 배우고 싶었습니다.
+2학년때 까지만 해도 네트워크나 서버는 엄청 크고 어려워보였는데
+3학년이 되고 리눅스도 배우고 웹정보검색이란 강의에서도 서버안에서의 내용을 배우다 보니 좀 익숙해지는 느낌입니다!
+그리고 배우면서 가장 크게 깨달은 것은 서버도 하나의 host라는 것입니다.
+즉, 지금 저희가 사용하고 있는 노트북처럼 하나의 큰 컴퓨터라는 것이죠
+물론 그 규모는 어마어마 하지만 우리가 흔히 영화에서 보는 엄청 크고 복잡해 보이는 서버실도 
+그 안에 작은 네모난 컴퓨터들(우리가 아는 본체)로 이루어 진 것입니다. 
+그 서버실 안의 작은 컴퓨터들은 우리가 흔히보는 개인용 컴퓨터 본체가 아닌 단순하게 구성된 하드웨어입니다. 
+언제든 고장나면 다른 하드웨어로 교체할 수 있도록 하기 위해서 입니다. 
+사실 아직도 이런건가? 하느 느낌으로 스스로 정확하게 알고있다고 말할 수 없는 상태지만
+꼭 이부분을 공부해서 큰 컴퓨터와 네트워트에 대해 이해하려고 열심히 해야겠어요ㅎㅎ
+
+
+이번에 배운 server 구축에 관해 실습하면서 과정을 정리해보았습니다. 
+과정에 대해 얘기하기 전 3가지 서버에 대한 내용을 간단히 정리하면
+
+Telnet Server
+ - 인터넷이나 로컬 영역 네트워크 연결ㅇ 쓰이는 네트워크 프로토콜(23번 포트)
+ 
+ OpenSSH Server
+ - telnet보다 보안이 강화된 네크워크 프로토콜 (22번 포트)
+ 
+ VNC Server
+ - 컴퓨터 환경에서 원격으로 다른 컴퓨터르 제어하느 그래픽 데스크톰 공유 시스템
+
+
+<Telnet Server 구축>
+
+1. Telnet server 설치
+    - 먼저 설치할 패키지가 있는지 확인하기
+   dpkg -l xinetd
+
+  - xinetd : 네트워크에 들어오는 요청을 처리하는 서비스이자 데몬
+멀티태스킹 운영 체제에서 데몬(daemon)은 사용자가 직접적으로 제어하지 않고, 백그라운드에서 돌면서 여러 작업을 하는 프로그램
+
+
+2. Telnet 설정파일 편집
+  vi /etc/xinetd.d/telnet
+
+service telnet // 해당 서비스 이름
+{
+	disable = no    //해당 서비스를 사용하려면 no, 서비스 하지 않으려면 yes
+	flags = REUSE  
+	socket_type = stream  //해당 서비스가 tcp 사용 -> stream , udp 사용 -> dgram
+	wait = no       //여러 명의 사용자가 동시에 요청했을 때 이전의 서비스가 끝나지 않더라도 다른 서비스 요청이 들어오도록 허용 
+	user = root     // 해당 서비스 어떤 사용자의 권한으로 서비스 할 것인지
+	server = /usr/sbin/in.telnetd
+	log_on_failure += USERID    // 해당 서비스에 접속하지 못하였을 경우에 로그 파일에 기록할 내용 설정 +=(추가할 항목), -=(제거할 항목)
+}
+
+
+3. 사용자 추가 
+    adducer linuxta
+
+4. talnet 서비스 가동
+systemctl restart xinetd
+ 
+   컴퓨터 재부팅시 바로 텔넷이 실행될 수 있겠금 상시 가동될 수 있도록 설정
+  Systemctl enable xinetd
+
+  잘 설치됬는지 확인
+   Systemctl status xinetd
+ => xinetd.setvice - LSB : Starts or stops the xinetd daemon
+    Active (running) -> 잘 동작중
+
+5. 방화벽 설정 ( 포트 열기)
+ufw allow 23/tcp
+ Rule added (이 규칙이 포함됨을 의미)
+
+
+<Telnet Server 접속>
+ifconfig 
+ inet 에 나오는 ip 주소로 
+ telnet ip 주소 치면 됩니다
+
+들어가서 아까 만든 linuxta 계정으로 로그인하면 접속에 성공하였습니다. 
+whoami <- 지금 user가 누구인지 알려주는 명령어
+
++ telnet 에서는 root 계정으로 접속 불가
+만약 root 로 접근하고 싶을 때는 일반 계정으로 접속하여
+sudo  또는 su - 로 접근
+
+
+
+<OpenSSH Server 구축>
+
+0. 우분투 버전 변경
+ vi /etc/apt/sources.list 
+bionic main
+bionic-updates main 으로 변경
+:%s/xenial/bionic-updates       //vi 에서 문자열 바꾸는 명령
+
+apt update
+
+1. SSH 설치
+apt install openssh-server
+
+2. ssh 가동
+systemctl restart ssh
+
+3. ssh 상시 가동 설정
+systemctl enable ssh
+
+4. ssh 가동 여부 확인
+systemctl status ssh
+ Active : active(running) 이면 가동 중임
+
+5. 방화면에서 ssh의 22번 포트 허용
+ufw allow 22/tcp
+
+6. server ip 확인
+ifconfig ens32
+
+
+<OpenSSH Server 접속>
+리눅스에서 접속
+
+1. 해당 서버 ip확인
+ifconfig ens32
+
+2. ssh접속
+ 1) ssh ip주소
+ 2) ssh 계정id@ip주소
+
+3. 로그인 하면 접속 완료!
+
+동작은 텔넷과 비슷하지만 차이점 주고 받는 내용이 암호화 되어 있다는 점!!
+
+
