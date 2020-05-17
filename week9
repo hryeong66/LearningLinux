@@ -1,0 +1,44 @@
+<Linux Kernel 개발참여방법과 문화 (Contribution) | 송태웅(Taeung Song) | 2017.05.27>
+  https://www.youtube.com/watch?v=r6CWBxSPzUc&feature=youtu.be
+
+처음에 이 영상을 보고싶었던 이유는 리눅스 커널? 에 확 꽂혀서 보게 되었는데요
+사실 중요한 건 뒤에 있는 개발참여방법과 문화이죠
+
+이 영상에서 알려주는 내용들은 git을 통한 open source 개발 방법에 관한 내용들입니다.
+
+git을 잘 쓰지는 못하지만 안드로이드로 팀 프로젝트를 하면서 사용중입니다.
+이 영상을 통해 협업할 때 중요한 git 사용법에 대한 꿀팁과 실제 리눅스 커널중에 하나인 perf를 clone 하여 개발하는 방법을 알게되었습니다.
+
+우선 perf를 가져와 개발하는 방법은
+
+1. $git:clone: 클론하여 얻은 주소
+2. vi linux/MAINTAINERS // 주 관리자들과 branch 
+3. 커밋 만들기
+  $git:commit-asm "perf tools:Add a tip to tips"
+4. commit을 patch 파일로 만들고 code style 검색
+  $git:format-patch-1
+  $scripts/checkpatch.pl<.patch 파일명>
+5. git sendmail 설정
+
+사실 아직 설명만 들어서 확실하게 감이 오지느 않습니다..^^;;
+이전에는 sourceTree를 써서 쉽게 해와서 터미널로 한다는게 아직 좀 낯설지만
+맥북산 이유가 터미널로 해보고 싶어서도 있으니 꼭 한 번 해봐야겠습니다.
+
+그리고 알게된 꿀팁들!
+
+Commit message and title
+ -> 내용에 대해 정확하게 적기! 
+ 그냥 두루뭉실에서 이런 파일을 고쳤습니다가 아니라 고치 부분에 대해 정확하게 적기!
+ 
+Commit 단위는 어느정도??
+ -> 한 함수는 하나의 작업, 코딩하듯이
+  한 commit은 하나의 목적/ 이유로 구성하는 것이 바람직
+  
+=> 명쾌한 이해, 효과적이 리뷰, 코드 변화 과정 추척 용이
+
+
+
+
+
+
+
