@@ -1,1 +1,33 @@
 #컴퓨터 시스템관리 13주차
+
+이번 실습은 재밌게 진행하다가 눈물날 뻔 했습니다...
+지난번까지 잘 되던 mysql이 계속 failed가 떠서 열심히 구글링하면서
+로그 파일 지우기, 디렉토리 새로 만들어 경로 설정하기, my.cnf 에서 내용 수정하기 등등
+계속 해봐도 안돼서 진짜 눈물날 뻔 했지만 그때 스쳐지나간 한가지
+바로 지우고 새로 재설치하는 것이지요^^
+
+이 방식도 2번을 진행했습니다. 처음에 할 때 깔끔하게 지워지지 않았는지 failed가 뜨길래
+어느 한 분이 소개해주신 깔끔하게 지우는 방법에 대해 공유하려고 합니다!
+
+1)
+apt-get purge mysql-server
+
+2)
+apt-get purge mysql-common
+
+3)
+rm -rf /var/log/mysql
+rm -rf /var/log/mysql.*
+rm -rf /var/lib/mysql
+rm -rf /etc/mysql
+
+4)
+apt-get install mysql-server --fix-mssing --fix-broken
+
+
+이렇게 해서 재설치 하였고 다시 lamp-server^ 하니까 정상작동하여 실습진행할 수 있었습니다..
+아직은 오류를 보면 왜 났는지 분석하고 즐거워하는 프로그래머가 되는 것은 멀었다고 생각이 들었습니다..ㅎㅎ
+
+출처: https://kkotkkio.tistory.com/82 [KKOTKKIO'S CAVE]
+
+
